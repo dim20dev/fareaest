@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Restaurant Ingredient Manager</title>
+  <title>Karousos</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -82,28 +82,28 @@
 <body>
 
   <header>
-    <h1>Restaurant Ingredient Manager</h1>
+    <h1>Karousos</h1>
   </header>
 
   <div class="container">
 
     <!-- PAGE 1: FORM -->
     <div id="form-page" class="page active">
-      <h2>Add New Ingredient</h2>
+      <h2>Καινούρια παραλαβή</h2>
       <form id="ingredient-form">
-        <label for="item">Item Name</label>
+        <label for="item">Προϊόν</label>
         <input type="text" id="item" required>
 
-        <label for="origin">Origin</label>
+        <label for="origin">Κωδικός</label>
         <input type="text" id="origin" required>
 
-        <label for="date">Date Received</label>
+        <label for="date">Ημερομηνία παραλαβής</label>
         <input type="date" id="date" required>
 
-        <label for="notes">Notes</label>
+        <label for="notes">Άλλες Πληροφορίες</label>
         <textarea id="notes" rows="3"></textarea>
 
-        <button type="submit">Add Ingredient</button>
+        <button type="submit">Πρόσθεση παραλαβής</button>
       </form>
       <div class="nav">
         <button onclick="goToPage('table-page')">Go to Table</button>
@@ -112,14 +112,14 @@
 
     <!-- PAGE 2: TABLE -->
     <div id="table-page" class="page">
-      <h2>Ingredient Table</h2>
+      <h2>Παραλαβές</h2>
       <table id="data-table">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Origin</th>
-            <th>Date Received</th>
-            <th>Notes</th>
+            <th>Προϊόν</th>
+            <th>Κωδικός</th>
+            <th>ημερομηνία παραλαβής</th>
+            <th>Άλλες πληροφορίες</th>
           </tr>
         </thead>
         <tbody>
