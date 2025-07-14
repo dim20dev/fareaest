@@ -2,23 +2,203 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Flexbox Navbar</title>
-  <link rel="stylesheet" href="nav1.css">
+  <title>Restaurant Ingredient Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f2ff;
+      color: #003366;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #007bff;
+      padding: 15px;
+      font-size: 16px;
+    }
+
+    th {
+      background-color: #cce5ff;
+    }
+
+    .nav {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-container">
-      <img src="fe.png" alt="Logo" class="logo">
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Menu</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">Location</a></li>
-      </ul>
-    </div>
-  </nav>
+  <header>
+    <h1>Restaurant Ingredient Manager</h1>
+  </header>
 
+  <div class="container">
+
+    <!-- PAGE 1: FORM -->
+    <div id="form-page" class="page active">
+      <h2>Add New Ingredient</h2>
+      <form id="ingredient-form">
+        <label for="item">Item Name</label>
+        <input type="text" id="item" required>
+
+        <label for="origin">Origin</label>
+        <input type="text" id="origin" required>
+
+        <label for="date">Date Received</label>
+        <input type="date" id="date" required>
+
+        <label for="notes">Notes</label>
+        <textarea id="notes" rows="3"></textarea>
+
+        <button type="submit">Add Ingredient</button>
+      </form>
+      <div class="nav">
+        <button onclick="goToPage('table-page')">Go to Table</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2: TABLE -->
+    <div id="table-page" class="page">
+      <h2>Ingredient Table</h2>
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Origin</th>
+            <th>Date Received</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Ingredient rows go here -->
+        </tbody>
+      </table>
+      <div class="nav">
+        <button onclick="goToPage('form-page')">Back to Form</button>
+        <button onclick="exportToExcel()">Export to Excel</button>
+        <button onclick="exportToWord()">Export to Word</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Export Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/docx@8.1.1/build/index.umd.js"></script>
+
+  <script>
+    const form = document.getElementById('ingredient-form');
+    const tableBody = document.querySelector('#data-table tbody');
+
+    function goToPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const item = document.getElementById('item').value;
+      const origin = document.getElementById('origin').value;
+      const date = document.getElementById('date').value;
+      const notes = document.getElementById('notes').value;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item}</td>
+        <td>${origin}</td>
+        <td>${date}</td>
+        <td>${notes}</td>
+      `;
+      tableBody.appendChild(row);
+      form.reset();
+    });
+
+    function exportToExcel() {
+      const workbook = XLSX.utils.table_to_book(document.getElementById('data-table'));
+      XLSX.writeFile(workbook, 'ingredients.xlsx');
+    }
+
+    function exportToWord() {
+      const { Document, Packer, Paragraph, Table, TableRow, TableCell } = window.docx;
+      const rows = Array.from(document.querySelectorAll('#data-table tr'));
+
+      const docRows = rows.map(row => {
+        const cells = Array.from(row.cells).map(cell =>
+          new TableCell({ children: [new Paragraph(cell.innerText)] })
+        );
+        return new TableRow({ children: cells });
+      });
+
+      const doc = new Document({
+        sections: [{
+          children: [
+            new Paragraph("Ingredient Log"),
+            new Table({ rows: docRows })
+          ]
+        }]
+      });
+
+      Packer.toBlob(doc).then(blob => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'ingredients.docx';
+        link.click();
+      });
+    }
+  </script>
 </body>
 </html>
